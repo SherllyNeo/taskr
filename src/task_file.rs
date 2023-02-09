@@ -79,14 +79,24 @@ pub fn remove_task(task_title: &str) {
 }
 
 pub fn list_all() {
+    println!("\n listing in order added, not order of importance \n");
 
     let file = File::open(TO_DO_FILE).expect("could not open file path");
     let mut rdr = csv::Reader::from_reader(file);
+    let mut to_do_list: Vec<Task> = Vec::new();
+
     for result in rdr.records() {
         let record = result.expect("could not open dns record");
         let task_title = &record[0];
         let task_date = &record[1];
-        println!("\n {} -- {} \n",task_title,task_date);
+        let dt = string_to_date(task_date);
+        let new_task = Task { task_title: task_title.to_owned(), task_date: dt };
+        to_do_list.push(new_task);
+    }
+    to_do_list.sort_by(|task_a, task_b| task_b.task_date.cmp(&task_a.task_date));
+
+    for task in to_do_list {
+        println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date))
 
     }
 
