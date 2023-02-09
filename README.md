@@ -12,7 +12,8 @@ taskr --done "Go shopping"
 Deleted task!
 
 taskr --list
-"Go gym" - "2021-03-11"
+
+This will lists tasks with the most recent at the bottom of the output
 
 
 taskr --upcoming
