@@ -4,9 +4,9 @@ use std::fs::File;
 use crate::TO_DO_FILE;
 use std::fs::OpenOptions;
 use crate::Task;
-use crate::date_functions::string_to_date;
-use crate::date_functions::date_to_string;
 use chrono::NaiveDate;
+use crate::date_functions::{string_to_date,date_to_string,difference_between_dates};
+use colored::Colorize;
 
 fn parse_ics_string(content: &str) -> (Vec<String>,Vec<String>) {
     let ics_lines: Vec<&str> = content.split("\n").collect();
@@ -137,12 +137,24 @@ pub fn list_all() {
         let new_task = Task { task_title: task_title.to_owned(), task_date: dt };
         to_do_list.push(new_task);
     }
+
     to_do_list.sort_by(|task_a, task_b| task_b.task_date.cmp(&task_a.task_date));
+    let today_nav = chrono::offset::Local::now().date_naive();
 
     for task in to_do_list {
-        println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date))
+        let diff = difference_between_dates(task.task_date,today_nav);
 
-    }
-
-
+        if diff<0 {
+            println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date).red());
+        }
+        else if diff<2 {
+            println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date).yellow());
+        }
+        else if diff <=7 {
+            println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date).green());
+        }
+        else {
+            println!("------ \n task: {} \n date: {} \n------ ",task.task_title, date_to_string(task.task_date));
+        }
+        }
 }

@@ -8,6 +8,7 @@ use crate::date_functions::{string_to_date,difference_between_dates};
 
 pub fn formatter() {
 
+    let mut really_urgent: i32 = 0;
     let mut urgent: i32 = 0;
     let mut soon: i32 = 0;
     let file_read = File::open(TO_DO_FILE).expect("could not open file path");
@@ -28,7 +29,10 @@ pub fn formatter() {
     for task in to_do_list {
         let today_nav = chrono::offset::Local::now().date_naive();
         let diff = difference_between_dates(task.task_date,today_nav);
-        if diff<2 {
+        if diff<0 {
+            really_urgent+=1;
+        }
+        else if diff<2 {
             urgent+=1;
         }
         else if diff <=7 {
@@ -38,7 +42,7 @@ pub fn formatter() {
         }
 
     }
-    println!("|❗{}  📅{} |",urgent,soon);
+    println!("|❌{} ❗{}  📅{} |",really_urgent,urgent,soon);
 
 
 
