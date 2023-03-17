@@ -26,3 +26,7 @@ the candendar is for tasks due within 7 days
 
 taskr --clear
 Deleted all tasks!
+
+taskr --import_ics file_name
+
+This will read an ics file and import the task SUMMARY and just the date from the datetime into the task manager

@@ -34,6 +34,7 @@ SET WHERE THE TODO FILE SHOULD GO IN THE SOURCE CODE BEFORE COMPILING \n
 --done will will delete a task \n
 --upcoming will give a count of tasks due today/tomorrow and within the next 7 days \n
 --clear will delete all tasks \n
+--import_ics will import calendar tasks from ics \n
 
              ");
 }
