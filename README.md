@@ -17,6 +17,7 @@ This will lists tasks with the most recent at the bottom of the output
 
 
 taskr --upcoming
+❌4
 ❗3
 📅 5
 
