@@ -8,6 +8,24 @@ use crate::date_functions::string_to_date;
 use crate::date_functions::date_to_string;
 use chrono::NaiveDate;
 
+fn parse_ics_string(content: &str) -> (Vec<String>,Vec<String>) {
+    let ics_lines: Vec<&str> = content.split("\n").collect();
+    let ics_summaries: Vec<String> = ics_lines
+        .clone()
+        .into_iter()
+        .filter(|string| string.contains("SUMMARY"))
+        .map(|string| string.replace("SUMMARY:",""))
+        .collect();
+
+
+    let ics_dates: Vec<String> = ics_lines.into_iter()
+        .filter(|string| string.contains("DTSTART"))
+        .map(|string| string.replace("DTSTART:",""))
+        .map(|string| string.split("T").next().expect("Could not split on T").to_string())
+        .map(|string| format!("{}-{}-{}",&string[0..4],&string[4..6],&string[6..8]))
+        .collect();
+    (ics_summaries,ics_dates)
+}
 
 pub fn add_task(task_title: &str, task_date: &str ) {
     let file = OpenOptions::new()
@@ -20,6 +38,32 @@ pub fn add_task(task_title: &str, task_date: &str ) {
 
     wtr.write_record(&[task_title, task_date]).expect("could not write to to do list");
     wtr.flush().expect("Failed to flush");
+}
+
+pub fn import_ics(file_path: &str) {
+
+    /* Load in file to string */
+    let file_ics_content = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+    let tasks = parse_ics_string(&file_ics_content);
+
+
+
+    /* Opening file once before for loop to be more efficient than calling add task every time */
+    let file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .append(true)
+        .open(TO_DO_FILE)
+        .unwrap();
+    let mut wtr = csv::Writer::from_writer(file);
+
+    for i in 0..tasks.0.len() {
+        let task_title = &tasks.0[i];
+        let task_date = &tasks.1[i];
+        wtr.write_record(&[task_title, task_date]).expect("could not write to to do list");
+        wtr.flush().expect("Failed to flush");
+    }
 }
 pub fn clear() {
 

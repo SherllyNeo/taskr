@@ -64,6 +64,12 @@ task_file::remove_task(&task_title);
 println!("Task removed!");
 
 }
+else if mode == "--import_ics" {
+let file_path = args[2].parse::<String>().unwrap();
+task_file::import_ics(&file_path);
+println!("Imported from ics file!");
+
+}
 else {
     println!("please type in a mode in the format taskr --mode <options> where the modes are: upcoming, done, add, list, clear " );
 
