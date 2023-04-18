@@ -5,6 +5,7 @@ use crate::TO_DO_FILE;
 use std::fs::OpenOptions;
 use crate::Task;
 use chrono::NaiveDate;
+use std;
 use crate::date_functions::{string_to_date,date_to_string,difference_between_dates};
 use colored::Colorize;
 
@@ -98,7 +99,12 @@ pub fn remove_task(task_title: &str) {
         let new_task = Task { task_title: task_title.to_owned(), task_date: dt };
         to_do_list.push(new_task);
     }
+    let length_before_filter = to_do_list.len();
     let filtered_to_do_list: Vec<Task> = to_do_list.into_iter().filter(|task| task.task_title != task_title).collect();
+    if filtered_to_do_list.len() == length_before_filter {
+        println!("Task does not exist in record");
+        std::process::exit(0);
+    }
 
 
     fs::remove_file(TO_DO_FILE).expect("unable to remove to do list file");
